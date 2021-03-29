@@ -1,12 +1,8 @@
-import { Db, MongoClient, MongoError } from 'mongodb'
+import { Db, MongoClient } from 'mongodb'
 
 type ConnectType = {
   db: Db
   client: MongoClient
-}
-
-type ErrorType = {
-  message: MongoError
 }
 
 const client = new MongoClient(process.env.DATABASE_URL!, {
@@ -14,7 +10,7 @@ const client = new MongoClient(process.env.DATABASE_URL!, {
   useUnifiedTopology: true
 })
 
-export default async function connect(): Promise<ConnectType | ErrorType> {
+export default async function connect(): Promise<ConnectType> {
   try {
     if(!client.isConnected()) await client.connect()
     const db = client.db('your-mongo-database-here')
@@ -23,6 +19,6 @@ export default async function connect(): Promise<ConnectType | ErrorType> {
       client
     }   
   } catch (error) {
-    throw new MongoError({ message: 'Server temporarily unavailable' })
+    throw new Error('Server temporarily unavailable')
   }
 }
